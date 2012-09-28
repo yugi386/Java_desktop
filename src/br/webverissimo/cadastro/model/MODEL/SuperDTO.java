@@ -1,6 +1,8 @@
+// ------------------------------------------------------------
+// SUPER DTO
+// ------------------------------------------------------------
 package br.webverissimo.cadastro.model.MODEL;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +22,8 @@ public class SuperDTO {
     
     // Atributos do relacionamento N - N.
     private List<Map<String , String>> relC  = new ArrayList<Map<String,String>>();
+    
+    private List<List<Map<String , String>>> relN  = new ArrayList<List<Map<String , String>>>();
     
 // ============================================================================
 //  MÉTODOS GENÉRICOS SET E GET
@@ -71,8 +75,32 @@ public class SuperDTO {
     public List<Map<String , String>> getRelC() {
         return relC;
     }
+
+    // Permite alterar um valor existente no SuperDTO
+    public void altRelC(int indice,String[] campos, String valores[]) throws SQLException{
+        for (int ct=0;ct<campos.length;ct++){
+           this.relC.get(indice).put(campos[ct], valores[ct]);
+        }
+    }
     
     /*
+     * 
+     * usuarioSenha.atrib.set("senha_id);
+     * usuarioSenha.atrib.set("usuario_id");
+     * 
+     * for 0 ..49
+     * departamentos:
+     * campos[]
+     * valores[]
+     * 
+     * usuario.relC.set(campos,valores);
+     * end
+     * 
+     * usuario.relC.get(0).get("id");
+     * 
+     * usuario.relN.get(0).get(48).get("nome"); //departamento
+     * usuario.relN.get(1).get(48).get("rua"); //endereco
+     * 
     public void setRelC(String[] campos, ResultSet dados) throws SQLException{
         while(dados.next()){                        
             Map<String, String> Mapa = new HashMap<String, String>();

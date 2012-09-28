@@ -1,9 +1,14 @@
 package br.webverissimo.cadastro.cadastroTelas;
 
+import br.webverissimo.cadastro.model.DAO.CargoDAO;
 import br.webverissimo.cadastro.model.DAO.DepartamentoDAO;
+import br.webverissimo.cadastro.model.DAO.ModelExtends;
 import br.webverissimo.cadastro.model.DTO.DepartamentoDTO;
+import br.webverissimo.cadastro.model.MODEL.SuperModel;
 import br.webverissimo.cadastro.utils.Utilitario;
 import br.webverissimo.cadastro.utils.Validacao;
+import java.io.FileNotFoundException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -60,6 +65,7 @@ public class Departamentos extends javax.swing.JFrame {
         jBAlterar = new javax.swing.JButton();
         jBExcluir = new javax.swing.JButton();
         jBNovo = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItemSair = new javax.swing.JMenuItem();
@@ -171,6 +177,13 @@ public class Departamentos extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Relatório");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -178,11 +191,14 @@ public class Departamentos extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLCodigo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLCodigo)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jTCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addComponent(jBInserir, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -194,8 +210,7 @@ public class Departamentos extends javax.swing.JFrame {
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                             .addComponent(jLDescricao)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jTDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jTDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -209,7 +224,8 @@ public class Departamentos extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLDescricao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -367,6 +383,17 @@ public class Departamentos extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jBuscaActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try {
+            // TODO add your handling code here:
+            relatorio();
+        } catch (SQLException ex) {
+            Logger.getLogger(Departamentos.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Departamentos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -407,6 +434,7 @@ public class Departamentos extends javax.swing.JFrame {
     private javax.swing.JButton jBInserir;
     private javax.swing.JButton jBNovo;
     private javax.swing.JButton jBusca;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLCodigo;
     private javax.swing.JLabel jLCodigoBusca;
     private javax.swing.JLabel jLDescricao;
@@ -476,5 +504,25 @@ public class Departamentos extends javax.swing.JFrame {
             Logger.getLogger(Departamentos.class.getName()).log(Level.SEVERE, null, ex.getMessage());
         }
     }
- 
+
+// ======================================    
+/**
+ * RELATORIO DEPARTAMENTO...
+ * @throws SQLException
+ * @throws FileNotFoundException 
+ */    
+private void relatorio() throws SQLException, FileNotFoundException{
+     DepartamentoDAO cargos = new DepartamentoDAO();        
+     String titulo = "Relatório de Departamentos:";
+     String arquivo = "C:/relatorio/departamentos.pdf";
+     String campos[]= {"id","descricao"};
+     String rotulos[] = {"ID","DESCRIÇÃO"};
+     
+     SuperModel model = new SuperModel();
+     ResultSet lista = model.list("departamentos",campos,"");
+     
+     ModelExtends pdf = new ModelExtends();
+     pdf.exportarPDF(titulo,arquivo,model.DevolveLista(campos,lista),rotulos, campos);
+}    
+    
 }

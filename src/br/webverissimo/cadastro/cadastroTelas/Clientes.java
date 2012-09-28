@@ -4,11 +4,15 @@
 package br.webverissimo.cadastro.cadastroTelas;
 
 import br.webverissimo.cadastro.model.DAO.ClienteDAO;
+import br.webverissimo.cadastro.model.DAO.UsuarioDAO;
 import br.webverissimo.cadastro.model.MODEL.SuperDTO;
 import br.webverissimo.cadastro.model.MODEL.SuperModel;
 import br.webverissimo.cadastro.model.MODEL.Validar;
 import br.webverissimo.cadastro.utils.Utilitario;
 import br.webverissimo.cadastro.utils.Validacao;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,6 +23,14 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 import javax.swing.table.DefaultTableModel;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 
 public class Clientes extends javax.swing.JFrame {
@@ -93,6 +105,7 @@ public class Clientes extends javax.swing.JFrame {
         jTBairro = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
         jTCidade = new javax.swing.JTextField();
+        jBRelatorio = new javax.swing.JButton();
         jPMensagem = new javax.swing.JPanel();
         jLMensagem = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -103,6 +116,8 @@ public class Clientes extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItemSair = new javax.swing.JMenuItem();
+        jMGerarPlanilhaExcel = new javax.swing.JMenuItem();
+        jMGerarPlanilhaExcelTodos = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Gerenciamento de Clientes");
@@ -216,6 +231,13 @@ public class Clientes extends javax.swing.JFrame {
 
         jLabel11.setText("Cidade:");
 
+        jBRelatorio.setText("Relatório");
+        jBRelatorio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBRelatorioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -261,7 +283,7 @@ public class Clientes extends javax.swing.JFrame {
                         .addGap(19, 19, 19)
                         .addComponent(jScrollPane1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(9, 9, 9)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -272,7 +294,9 @@ public class Clientes extends javax.swing.JFrame {
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(jLCodigo)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addComponent(jTCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jBRelatorio, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -331,7 +355,8 @@ public class Clientes extends javax.swing.JFrame {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jTCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jTCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jBRelatorio))
                                 .addGap(18, 18, 18)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLDescricao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -378,7 +403,7 @@ public class Clientes extends javax.swing.JFrame {
                 .addComponent(jLabel8)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                         .addComponent(jBAlterarRepresentante)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jBLimparRepresentante)
@@ -480,6 +505,22 @@ public class Clientes extends javax.swing.JFrame {
         });
         jMenu1.add(jMenuItemSair);
 
+        jMGerarPlanilhaExcel.setText("Gerar Planilha Excel - Registro Corrente");
+        jMGerarPlanilhaExcel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMGerarPlanilhaExcelActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMGerarPlanilhaExcel);
+
+        jMGerarPlanilhaExcelTodos.setText("Gerar Planilha Excel - Todos os Registros");
+        jMGerarPlanilhaExcelTodos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMGerarPlanilhaExcelTodosActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMGerarPlanilhaExcelTodos);
+
         jMenuBar1.add(jMenu1);
 
         setJMenuBar(jMenuBar1);
@@ -562,7 +603,7 @@ public class Clientes extends javax.swing.JFrame {
                 inicializa();
             } else {
                 // método para preencher o formulario com dados vindos do banco.
-               preencherFormulario(cliente);
+               preencherFormulario(cliente,0);
             }
         } catch (SQLException ex) {
             Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
@@ -624,6 +665,48 @@ public class Clientes extends javax.swing.JFrame {
         limparRepresentantesClientes();
     }//GEN-LAST:event_jBLimparRepresentanteActionPerformed
 
+    private void jBRelatorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBRelatorioActionPerformed
+        try {
+            // TODO add your handling code here:
+            relatorio();
+        } catch (SQLException ex) {
+            Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jBRelatorioActionPerformed
+/**
+ * chamada do metodo de geracao de relatorio
+ * @param evt 
+ */
+    private void jMGerarPlanilhaExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMGerarPlanilhaExcelActionPerformed
+        try {
+            try {
+                // TODO add your handling code here:
+                 planilhaExcel();
+            } catch (SQLException ex) {
+                Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMGerarPlanilhaExcelActionPerformed
+
+    private void jMGerarPlanilhaExcelTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMGerarPlanilhaExcelTodosActionPerformed
+        try {
+            // TODO add your handling code here:
+            planilhaExcelLista();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMGerarPlanilhaExcelTodosActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -668,6 +751,7 @@ public class Clientes extends javax.swing.JFrame {
     private javax.swing.JButton jBInserir;
     private javax.swing.JButton jBLimparRepresentante;
     private javax.swing.JButton jBNovo;
+    private javax.swing.JButton jBRelatorio;
     private javax.swing.JButton jBusca;
     private javax.swing.JComboBox jComboEstados;
     private javax.swing.JLabel jLCodigo;
@@ -688,6 +772,8 @@ public class Clientes extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JMenuItem jMGerarPlanilhaExcel;
+    private javax.swing.JMenuItem jMGerarPlanilhaExcelTodos;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItemSair;
@@ -911,9 +997,9 @@ public class Clientes extends javax.swing.JFrame {
     }        
     
 // =============================================================================================    
-    private void preencherFormulario(List<Map<String, String>> cliente) throws SQLException {
+    private void preencherFormulario(List<Map<String, String>> cliente,int laco) throws SQLException {
             // Preenche um registro...
-            Map<String, String> registro = cliente.get(0);
+            Map<String, String> registro = cliente.get(laco);
         
         /*
          {"id","nome","telefone","limiteCredito","dataultimaCompra","rg",
@@ -1002,4 +1088,443 @@ public class Clientes extends javax.swing.JFrame {
  private void adicionaRepresentantes() {
         jLRepresentantesIncluir.setListData(jLRepresentantes.getSelectedValues());
     }    
+// ---------------------------------------------------------------------------------------- 
+/**
+  * rotina de relatorios do sistema
+  * 
+  */ 
+ private void relatorio() throws SQLException, FileNotFoundException{
+     ClienteDAO cliente = new ClienteDAO();        
+     String titulo = "Relatório de Clientes:";
+     String arquivo = "C:/relatorio/clientes.pdf";
+     String campos[]=  {"id","nome","telefone","limiteCredito","dataultimaCompra","rg",
+             "cpf","ativo","observacao","rua","bairro","cidade","estado_id"};
+     
+     String rotulos[] = {"ID","NOME","TELEFONE","LIMITE DE CRÉDITO",
+       "ÚLTIMA COMPRA","RG","CPF","ATIVO","OBSERVAÇÃO","RUA","BAIRRO","CIDADE","ESTADO_ID"};
+     
+     cliente.exportarPDF(titulo,arquivo,cliente.listar(""),rotulos, campos);
+} 
+ // ----------------------------------------------------------------------------
+ /**
+  * Método para geracao de planilha excel do registro corrente...
+  * @throws FileNotFoundException
+  * @throws IOException 
+  */
+ private void planilhaExcel() throws FileNotFoundException, IOException, SQLException {
+
+  // variavel para setar se os representantes serão impressos
+  // em uma mesma coluna ou mais de uma -> 1 = mesma coluna; 2 = em várias colunas.   
+  int colunas = 1;   
+     
+  // PEGANDO DADOS DO SUPERDTO ================================================
+     
+  SuperDTO cliente = preencherSuperDTO(); // preenche os dados do formulario...
+  String [] ret = {"id","nome","telefone","limiteCredito","dataultimaCompra","rg",
+             "cpf","ativo","observacao","rua","bairro","cidade","estado_id"};   
+  
+  String[] cabecalho = {"CÓDIGO","NOME","TELEFONE","LIMITE DE CRÉDITO","DATA DA ÚLTIMA COMPRA","RG",
+            "CPF","ATIVO","OBSERVAÇÃO","RUA","BAIRRO","CIDADE","ESTADO"};
+
+   SuperModel model = new SuperModel(); // instanciando Super Model
+          
+  // Verificando chave estrangeira:
+  // Traduzindo id para Nome - relacionamento 1 .. N
+        String Campos[] = {"id","descricao"};  // campos da tabela estado
+        String condicao = "id="+cliente.getAtrib().get("estado_id");
+        ResultSet lista = model.list("estados",Campos,condicao);
+        List<Map<String , String>> registro = model.DevolveLista(Campos,lista);
+        String chave[] = {"estado_id"};  // chave estrangeira da tabela clientes relacionada ao estado...
+        String valor[] = {registro.get(0).get(Campos[1])};  // relacina a descricao do estado
+        cliente.setAtrib(chave,valor);
+
+  // Verificando Relacionamento N..N
+  // Traduzindo id para Nome - relacionamento N .. N
+
+    for (int ct=0;ct<cliente.getRelC().size();ct++){    
+        String Campos2[] = {"id","nome"}; // campos da tabela usuario...
+        condicao = "id="+cliente.getRelC().get(ct).get("representantes_id");
+        lista = model.list("usuarios",Campos2,condicao);
+        registro = model.DevolveLista(Campos2,lista);
+        String chave2[] = {"representantes_id"}; // chave na tabela de relacionamento clientes - representantes
+        String valor2[] = {registro.get(0).get(Campos2[1])};  // relacina ao nome do usuario (representante)
+        //  permite alterar um valor já inserido no SuperDTO numa dada posicao
+        cliente.altRelC(ct,chave2,valor2);
+    }
+     
+   // ABAIXO, INICIO DA GERACAO DA PLANILHA
+    Workbook wb = new HSSFWorkbook(); // cria arquivo
+    CreationHelper createHelper = wb.getCreationHelper();
+    Sheet planilha1 = wb.createSheet("Planilha 1");  // cria planilha
+
+    // Estilo padronizados: ================================================
+    
+    // Estilo data DIA/MES/ANO
+    CellStyle estiloData = wb.createCellStyle();
+    estiloData.setDataFormat( createHelper.createDataFormat().getFormat("dd/mm/yyyy"));
+    
+    // Estilo Moeda: R$800,00
+    CellStyle estiloMoeda = wb.createCellStyle();
+    estiloMoeda.setDataFormat(createHelper.createDataFormat().getFormat("R$##,##0.00"));
+  
+    // Estilo Número 1.000,00
+    CellStyle estiloNumero = wb.createCellStyle();
+    estiloNumero.setDataFormat(createHelper.createDataFormat().getFormat("##,##0.00"));
+    
+    // Estilo Número Inteiro 256
+    CellStyle estiloNumeroInteiro = wb.createCellStyle();
+    estiloNumeroInteiro.setDataFormat(createHelper.createDataFormat().getFormat("#0"));
+    
+  
+    // CABEÇALHO DA PLANILHA ================================================
+    
+    // Título:
+    Row titulo = planilha1.createRow((short)0);
+    Cell tit = titulo.createCell(0);
+    tit.setCellValue("Planilha de Clientes");
+    
+    // Codigo para pegar o total das colunas
+    int totColuna = cliente.getRelC().size();
+    
+    // Verifica impressao em varias colunas dos representantes.
+    if (colunas != 1){
+        totColuna = totColuna + ret.length -1;  // no caso de impressao em várias colunas
+    } else {    
+        totColuna = ret.length;  // no caso de agrupamento dos representantes em uma mesma coluna
+    }    
+    
+    // Mesclando o titulo do Relatório
+    planilha1.addMergedRegion(new CellRangeAddress(
+            0, //first row (0-based)
+            0, //last row  (0-based)
+            0, //first column (0-based)
+            totColuna  //last column  (0-based)
+    ));
+
+  
+    // Cabeçalho:
+    Row cab = planilha1.createRow((short)1);
+    int ct=0;
+    for (ct=0;ct<ret.length;ct++){
+        cab.createCell(ct).setCellValue(cabecalho[ct]);
+    }    
+
+    int inicio = ct;
+    if (colunas != 1){ // verifica se será uma ou mais colunas para os representantes...
+        // Preenchendo cabeçalho do Representante
+        for (ct=inicio;ct<cliente.getRelC().size()+inicio;ct++){
+            cab.createCell(ct).setCellValue("REPRESENTANTE:");
+        }    
+    }else {    
+        // Forma alternativa: criando uma única coluna para o relacionamento N:N
+        cab.createCell(ct).setCellValue("REPRESENTANTES:");
+    }
+
+    
+    // ESCREVENDO OS DADOS DO USUÁRIO ================================================
+            
+    // Dados do Usuário: Tabela clientes...
+    // ATENÇÃO: para passar um estilo para um dado na planilha EXCEL
+    //          é preciso que o formato do dado sej int, double, date, etc
+    //          daí a necessidade de converter os dados do HASH ...
+    
+    Row linha = planilha1.createRow((short)2);
+    for (ct=0;ct<ret.length;ct++){
+        if (ret[ct].equals("limiteCredito")){  // formato Moeda
+            String valorTemp = cliente.getAtrib().get(ret[ct]);
+            Cell numero = linha.createCell(ct);
+            numero.setCellStyle(estiloMoeda);
+            numero.setCellValue(Validar.ConverteNumero(valorTemp));
+        } else if (ret[ct].equals("dataultimaCompra")){   // formato Data
+            Cell numero = linha.createCell(ct);
+            numero.setCellStyle(estiloData);
+            String data = Validar.DataFormulario(cliente.getAtrib().get(ret[ct]));
+            numero.setCellValue(Validar.StringToDate(data));
+        } else if (ret[ct].equals("ativo#")){   // formato Número
+            String valorTemp = cliente.getAtrib().get(ret[ct]);
+            Cell numero = linha.createCell(ct);
+            numero.setCellStyle(estiloNumero);
+            numero.setCellValue(Validar.ConverteNumero(valorTemp));
+        } else if (ret[ct].equals("id")){   // formato Número Inteiro
+            String valorTemp = cliente.getAtrib().get(ret[ct]);
+            Cell numero = linha.createCell(ct);
+            numero.setCellStyle(estiloNumeroInteiro);
+            numero.setCellValue(Validar.ConverteNumeroInteiro(valorTemp));            
+        } else{  // formato String
+            linha.createCell(ct).setCellValue(cliente.getAtrib().get(ret[ct]));
+        }
+    }    
+    
+    // Preenchendo dados do Representante ================================================
+    inicio = ct;
+    int contador = 0;
+    if (colunas != 1){ // impressao em varias colunas dos representantes ou uma só
+        for (ct=inicio;ct<cliente.getRelC().size()+inicio;ct++){
+            String reg = cliente.getRelC().get(contador).get("representantes_id");
+            linha.createCell(ct).setCellValue(reg);
+            contador = contador + 1;
+        }    
+    } else {
+        // método alternativo: agrupando os representantes numa única célula:
+        String reg = "";
+        for (contador=0;contador<cliente.getRelC().size();contador++){
+            if (contador != cliente.getRelC().size()-1){    
+                reg += cliente.getRelC().get(contador).get("representantes_id") + ",\n";
+            } else{
+                reg += cliente.getRelC().get(contador).get("representantes_id");
+            }
+        }
+        linha.createCell(ct).setCellValue(reg);    // coloca todos os representantes na mesma célula
+        linha.setHeight((short)(linha.getHeight()*contador));  // aumenta a altura da linha para mostrar conteúdo
+    }
+    // Formula de soma coluna: ================================================
+    
+    Row formula = planilha1.createRow((short)3); // criando linha da formula
+    for (ct=0;ct<=totColuna;ct++){
+        formula.createCell(ct);  // criando células na linha da formula
+    }
+    
+    // Somendo Limite de Crédito:
+    String strformula = "SUM(D3:D3)";
+    formula.createCell(3).setCellFormula(strformula); // colocando formula numa determinada célula....
+    
+    // Redimensionado as colunas para caber conteúdo ======================
+    for (ct=0;ct<=totColuna;ct++){
+        planilha1.autoSizeColumn(ct);
+    }
+
+    // Gravando o arquivo  ================================================
+    FileOutputStream fileOut = new FileOutputStream("c:/relatorio/clientes1.xls");
+    wb.write(fileOut);
+    fileOut.close();
  }
+ // ================================================================================
+ // ================================================================================
+ 
+ /**
+  * Cria uma planilha excel com dados de todos os clientes
+  * @throws FileNotFoundException
+  * @throws IOException
+  * @throws SQLException 
+  */
+ private void planilhaExcelLista() throws FileNotFoundException, IOException, SQLException {
+
+  // variavel para setar se os representantes serão impressos
+  // em uma mesma coluna ou mais de uma -> 1 = mesma coluna; 2 = em várias colunas.   
+  int colunas = 1;   
+
+  // PEGANDO DADOS DO SUPERDTO ================================================
+
+    ClienteDAO cli = new ClienteDAO();
+    List<Map<String , String>> clientes  = new ArrayList<Map<String,String>>();
+    clientes = cli.listar(""); // todos os clientes     
+  
+  String [] ret = {"id","nome","telefone","limiteCredito","dataultimaCompra","rg",
+             "cpf","ativo","observacao","rua","bairro","cidade","estado_id"};   
+  String[] cabecalho = {"CÓDIGO","NOME","TELEFONE","LIMITE DE CRÉDITO","DATA DA ÚLTIMA COMPRA","RG",
+            "CPF","ATIVO","OBSERVAÇÃO","RUA","BAIRRO","CIDADE","ESTADO"};
+       
+   // ABAIXO, INICIO DA GERACAO DA PLANILHA
+    Workbook wb = new HSSFWorkbook(); // cria arquivo
+    CreationHelper createHelper = wb.getCreationHelper();
+    Sheet planilha1 = wb.createSheet("Planilha 1");  // cria planilha
+
+    // Estilo padronizados: ================================================
+    
+    // Estilo data DIA/MES/ANO
+    CellStyle estiloData = wb.createCellStyle();
+    estiloData.setDataFormat( createHelper.createDataFormat().getFormat("dd/mm/yyyy"));
+    
+    // Estilo Moeda: R$800,00
+    CellStyle estiloMoeda = wb.createCellStyle();
+    estiloMoeda.setDataFormat(createHelper.createDataFormat().getFormat("R$##,##0.00"));
+  
+    // Estilo Número 1.000,00
+    CellStyle estiloNumero = wb.createCellStyle();
+    estiloNumero.setDataFormat(createHelper.createDataFormat().getFormat("##,##0.00"));
+    
+    // Estilo Número Inteiro 256
+    CellStyle estiloNumeroInteiro = wb.createCellStyle();
+    estiloNumeroInteiro.setDataFormat(createHelper.createDataFormat().getFormat("#0"));
+    
+  // Calculando o Total das Colunas...
+    int totColuna=0;  // total de colunas
+    if (colunas != 1){  // se houver mais de uma coluna para representantes entao devemos saber quantas!!!!
+        for (int ct=0;ct<clientes.size();ct++){
+            preencherFormulario(clientes,ct);  // preenche o formulario com o registro corrente... 
+            SuperDTO cliente = preencherSuperDTO(); // preenche os dados do formulario...
+            if (cliente.getRelC().size()>totColuna){
+                totColuna = cliente.getRelC().size();
+            }
+        }    
+    }
+    
+    // Verifica impressao em varias colunas dos representantes.
+    if (colunas != 1){
+        totColuna = totColuna + ret.length -1;  // no caso de impressao em várias colunas
+    } else {    
+        totColuna = ret.length;  // no caso de agrupamento dos representantes em uma mesma coluna
+    }    
+    
+    int laco = 0;
+   // laco com todos os clientes...
+  for (laco=0;laco<clientes.size();laco++){  // for para varrer todos os registros...
+        // 
+       preencherFormulario(clientes,laco);  // preenche o formulario com o registro corrente... 
+       SuperDTO cliente = preencherSuperDTO(); // preenche os dados do formulario...
+       SuperModel model = new SuperModel(); // instanciando Super Model
+
+      // Verificando chave estrangeira:
+      // Traduzindo id para Nome - relacionamento 1 .. N
+            String Campos[] = {"id","descricao"};  // campos da tabela estado
+            String condicao = "id="+cliente.getAtrib().get("estado_id");
+            ResultSet lista = model.list("estados",Campos,condicao);
+            List<Map<String , String>> registro = model.DevolveLista(Campos,lista);
+            String chave[] = {"estado_id"};  // chave estrangeira da tabela clientes relacionada ao estado...
+            String valor[] = {registro.get(0).get(Campos[1])};  // relacina a descricao do estado
+            cliente.setAtrib(chave,valor);
+
+      // Verificando Relacionamento N..N
+      // Traduzindo id para Nome - relacionamento N .. N
+
+        for (int ct=0;ct<cliente.getRelC().size();ct++){    
+            String Campos2[] = {"id","nome"}; // campos da tabela usuario...
+            condicao = "id="+cliente.getRelC().get(ct).get("representantes_id");
+            lista = model.list("usuarios",Campos2,condicao);
+            registro = model.DevolveLista(Campos2,lista);
+            String chave2[] = {"representantes_id"}; // chave na tabela de relacionamento clientes - representantes
+            String valor2[] = {registro.get(0).get(Campos2[1])};  // relacina ao nome do usuario (representante)
+            //  permite alterar um valor já inserido no SuperDTO numa dada posicao
+            cliente.altRelC(ct,chave2,valor2);
+        }    
+        // CABEÇALHO DA PLANILHA ================================================
+
+        int ct=0, inicio=0;
+        if (laco==0){  // so imprime o cabecalho uma vez....
+                // Título:
+                Row titulo = planilha1.createRow((short)0);
+                Cell tit = titulo.createCell(0);
+                tit.setCellValue("Planilha de Clientes");
+
+                // Codigo para pegar o total das colunas
+                //totColuna = cliente.getRelC().size();
+                //totColuna = totColuna + ret.length -1;
+
+                // Mesclando o titulo do Relatório
+                planilha1.addMergedRegion(new CellRangeAddress(
+                        0, //first row (0-based)
+                        0, //last row  (0-based)
+                        0, //first column (0-based)
+                        totColuna  //last column  (0-based)
+                ));
+
+
+                // Cabeçalho:
+                Row cab = planilha1.createRow((short)1);
+                for (ct=0;ct<ret.length;ct++){
+                    cab.createCell(ct).setCellValue(cabecalho[ct]);
+                }    
+
+                if (colunas != 1){ // verifica se será uma ou mais colunas para os representantes...
+                    // Preenchendo cabeçalho do Represerntante
+                    inicio = ct;
+                    for (ct=inicio;ct<totColuna+inicio-ret.length+1;ct++){
+                        cab.createCell(ct).setCellValue("REPRESENTANTE:");
+                    } 
+                }else{
+                    // Forma alternativa: criando uma única coluna para o relacionamento N:N
+                    inicio = ct;
+                    cab.createCell(ct).setCellValue("REPRESENTANTES:");
+                }
+        }
+        
+        // ESCREVENDO OS DADOS DO USUÁRIO ================================================
+
+        // Dados do Usuário: Tabela clientes...
+        // ATENÇÃO: para passar um estilo para um dado na planilha EXCEL
+        //          é preciso que o formato do dado sej int, double, date, etc
+        //          daí a necessidade de converter os dados do HASH ...
+
+        Row linha = planilha1.createRow((short)laco+2);
+        for (ct=0;ct<ret.length;ct++){
+            if (ret[ct].equals("limiteCredito")){  // formato Moeda
+                String valorTemp = cliente.getAtrib().get(ret[ct]);
+                Cell numero = linha.createCell(ct);
+                numero.setCellStyle(estiloMoeda);
+                numero.setCellValue(Validar.ConverteNumero(valorTemp));
+            } else if (ret[ct].equals("dataultimaCompra")){   // formato Data
+                Cell numero = linha.createCell(ct);
+                numero.setCellStyle(estiloData);
+                String data = Validar.DataFormulario(cliente.getAtrib().get(ret[ct]));
+                numero.setCellValue(Validar.StringToDate(data));
+            } else if (ret[ct].equals("ativo#")){   // formato Número
+                String valorTemp = cliente.getAtrib().get(ret[ct]);
+                Cell numero = linha.createCell(ct);
+                numero.setCellStyle(estiloNumero);
+                numero.setCellValue(Validar.ConverteNumero(valorTemp));
+            } else if (ret[ct].equals("id")){   // formato Número Inteiro
+                String valorTemp = cliente.getAtrib().get(ret[ct]);
+                Cell numero = linha.createCell(ct);
+                numero.setCellStyle(estiloNumeroInteiro);
+                numero.setCellValue(Validar.ConverteNumeroInteiro(valorTemp));            
+            } else{  // formato String
+                linha.createCell(ct).setCellValue(cliente.getAtrib().get(ret[ct]));
+            }
+        }    
+
+        // Preenchendo dados do Representante ================================================
+        inicio = ct;
+        int contador = 0;
+        if (colunas != 1){ // verifica se será uma ou mais colunas para os representantes...
+            for (ct=inicio;ct<cliente.getRelC().size()+inicio;ct++){
+                String reg = cliente.getRelC().get(contador).get("representantes_id");
+                linha.createCell(ct).setCellValue(reg);
+                contador = contador + 1;
+            }    
+        } else {
+        // método alternativo: agrupando os representantes numa única célula:
+            String reg = "";
+            for (contador=0;contador<cliente.getRelC().size();contador++){
+                if (contador != cliente.getRelC().size()-1){    
+                    reg += cliente.getRelC().get(contador).get("representantes_id") + ",\n";
+                } else{
+                    reg += cliente.getRelC().get(contador).get("representantes_id");
+                }
+            }
+            linha.createCell(ct).setCellValue(reg);    // coloca todos os representantes na mesma célula
+            linha.setHeight((short)(linha.getHeight()*contador));  // aumenta a altura da linha para mostrar conteúdo
+        }    
+  }  // fim do laco que varre os registros...
+  
+    // Formula de soma coluna: ================================================
+    
+    int ct;
+    Row formula = planilha1.createRow((short)laco+2); // criando linha da formula
+    for (ct=0;ct<=totColuna;ct++){
+        formula.createCell(ct);  // criando células na linha da formula
+    }
+    
+    // Somando limite de crédito:
+    String strformula = "SUM(D3:D"+(clientes.size()+2)+")"; // calculando a linha apara inserir a formula...
+    formula.createCell(3).setCellFormula(strformula); // colocando formula numa determinada célula....
+
+    // Multiplicando id dos registros...
+    strformula = "SUM(A3:A"+(clientes.size()+2)+")"; // calculando a linha apara inserir a formula...
+    formula.createCell(0).setCellFormula(strformula); // colocando formula numa determinada célula....
+    
+    
+    
+    // Redimensionado as colunas para caber conteúdo ======================
+    for (ct=0;ct<=totColuna;ct++){
+        planilha1.autoSizeColumn(ct);
+    }
+
+    // Gravando o arquivo  ================================================
+    FileOutputStream fileOut = new FileOutputStream("c:/relatorio/clientes2.xls");
+    wb.write(fileOut);
+    fileOut.close();
+    inicializa();   //  limpa tudo...
+ 
+ }
+ // ====================================================================================
+ } // fim da classe

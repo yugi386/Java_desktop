@@ -3,6 +3,10 @@
  */
 package br.webverissimo.cadastro.model.MODEL;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -245,4 +249,50 @@ public class Validar {
         return ret;
     }         
 // ============================================================================    
+/**
+ * Este método converte um string para um Double
+ * @param dados
+ * @return 
+ */
+    public static Double ConverteNumero(String dados){
+    
+    Double num = Double.parseDouble(dados);
+    return num;
+} 
+// ============================================================================        
+    /**
+     * Método que converte um número em um número inteiro
+     * @param dados
+     * @return 
+     */
+ public static Integer ConverteNumeroInteiro(String dados){
+    
+    Integer num = Integer.parseInt(dados);
+    return num;
+}     
+// ---------------------------------------------------------------------------    
+// CONVERTE STRING PARA DATA
+    public static Date StringToDate(String data) {
+        Date date = null;
+
+        try {
+            DateFormat formatter;
+            formatter = new SimpleDateFormat("dd/MM/yyyy");
+            date = (Date) formatter.parse(data);
+            /*String s = formatter.format(date);*/
+        } catch (ParseException e) {
+            System.out.println("Exception :" + e);
+        }
+
+        return date;
+    }    
+// -----------------------------------------------------------------------------
+// CONVERTE DATA PARA STRING
+    public static String DateToString(Date datausu) {
+            String data = "";
+            SimpleDateFormat formataData = new SimpleDateFormat("dd/MM/yyyy");
+            data = formataData.format(datausu);
+            return data;
+    }    
+// ============================================================================        
 } // fim da classe

@@ -5,11 +5,11 @@ package br.webverissimo.cadastro.model.DAO;
 
 import br.webverissimo.cadastro.model.MODEL.SuperDTO;
 import br.webverissimo.cadastro.model.MODEL.SuperModel;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 
 public class UsuarioDAO extends ModelExtends {
 
@@ -83,4 +83,5 @@ public class UsuarioDAO extends ModelExtends {
         model.excluirCondicional("departamentos_usuarios", "usuarios_id="+usuario.getAtrib().get("id"));
     }
 // -------------------------------------------------------------------------------------------------------    
+// ==================================================================================    
 } /// fim da classe

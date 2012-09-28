@@ -9,6 +9,9 @@ import br.webverissimo.cadastro.model.MODEL.SuperModel;
 import br.webverissimo.cadastro.model.MODEL.Validar;
 import br.webverissimo.cadastro.utils.Utilitario;
 import br.webverissimo.cadastro.utils.Validacao;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,6 +22,14 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 import javax.swing.table.DefaultTableModel;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 
 public class Usuarios extends javax.swing.JFrame {
@@ -91,6 +102,7 @@ public class Usuarios extends javax.swing.JFrame {
         jBLimpar = new javax.swing.JButton();
         jPSenha = new javax.swing.JPasswordField();
         jPSenhaC = new javax.swing.JPasswordField();
+        jBRelatorio = new javax.swing.JButton();
         jPMensagem = new javax.swing.JPanel();
         jLMensagem = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -101,6 +113,8 @@ public class Usuarios extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItemSair = new javax.swing.JMenuItem();
+        jMGerarPlanilhaExcel = new javax.swing.JMenuItem();
+        jMGerarPlanilhaExcelTodos = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Gerenciamento de Usuários");
@@ -156,6 +170,12 @@ public class Usuarios extends javax.swing.JFrame {
 
         jLDescricao1.setText("Login");
 
+        jTLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTLoginActionPerformed(evt);
+            }
+        });
+
         jLDescricao2.setText("Senha");
 
         jLDescricao3.setText("Confirma");
@@ -168,7 +188,19 @@ public class Usuarios extends javax.swing.JFrame {
 
         jLabel3.setText("Salário:");
 
+        jTSalario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTSalarioActionPerformed(evt);
+            }
+        });
+
         jLabel4.setText("E-mail:");
+
+        jTEmail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTEmailActionPerformed(evt);
+            }
+        });
 
         jLabel5.setText("Ativo:");
 
@@ -214,6 +246,13 @@ public class Usuarios extends javax.swing.JFrame {
             }
         });
 
+        jBRelatorio.setText("Relatório");
+        jBRelatorio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBRelatorioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -229,83 +268,89 @@ public class Usuarios extends javax.swing.JFrame {
                         .addComponent(jLCodigo)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLDescricao1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLDescricao2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jPSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel6))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTEmail)
-                                    .addComponent(jTObs)))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTDataNascimento, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel2)
-                                .addGap(18, 18, 18)
-                                .addComponent(jCSexo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(19, 19, 19)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(7, 7, 7)
-                                .addComponent(jLabel7)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLDescricao1)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jTLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLDescricao2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jPSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel4)
+                                            .addComponent(jLabel6))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jTEmail)
+                                            .addComponent(jTObs)))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addComponent(jLabel1)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jTDataNascimento, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel2)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jCSexo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(19, 19, 19)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGap(7, 7, 7)
+                                        .addComponent(jLabel7)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jComboCargos, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                            .addComponent(jLDescricao3)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(jPSenhaC))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                .addComponent(jLabel3)
+                                                .addComponent(jLabel5))
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                .addComponent(jTSalario)
+                                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                                    .addComponent(jRadioButton1)
+                                                    .addGap(18, 18, 18)
+                                                    .addComponent(jRadioButton2)
+                                                    .addGap(0, 0, Short.MAX_VALUE)))))))
+                            .addComponent(jLabel8))
+                        .addGap(72, 72, 72))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(30, 30, 30)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jBAlterarDep, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jBLimpar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jBInserir, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jBAlterar)
+                                .addGap(18, 18, 18)
+                                .addComponent(jBExcluir)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jComboCargos, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLDescricao3)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jPSenhaC))
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(jLabel3)
-                                        .addComponent(jLabel5))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jTSalario)
-                                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                            .addComponent(jRadioButton1)
-                                            .addGap(18, 18, 18)
-                                            .addComponent(jRadioButton2)
-                                            .addGap(0, 0, Short.MAX_VALUE)))))))
-                    .addComponent(jLabel8)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGap(10, 10, 10)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(30, 30, 30)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jBAlterarDep, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jBLimpar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                            .addComponent(jBInserir, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(jBAlterar)
-                            .addGap(18, 18, 18)
-                            .addComponent(jBExcluir)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(jBNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(72, 72, 72))
+                                .addComponent(jBNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jBRelatorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addComponent(jScrollPane1)
@@ -369,7 +414,8 @@ public class Usuarios extends javax.swing.JFrame {
                             .addComponent(jBInserir)
                             .addComponent(jBAlterar)
                             .addComponent(jBExcluir)
-                            .addComponent(jBNovo))
+                            .addComponent(jBNovo)
+                            .addComponent(jBRelatorio))
                         .addGap(10, 10, 10)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -462,6 +508,22 @@ public class Usuarios extends javax.swing.JFrame {
         });
         jMenu1.add(jMenuItemSair);
 
+        jMGerarPlanilhaExcel.setText("Gerar Planilha Excel");
+        jMGerarPlanilhaExcel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMGerarPlanilhaExcelActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMGerarPlanilhaExcel);
+
+        jMGerarPlanilhaExcelTodos.setText("Gerar Planilha Excel Todos");
+        jMGerarPlanilhaExcelTodos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMGerarPlanilhaExcelTodosActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMGerarPlanilhaExcelTodos);
+
         jMenuBar1.add(jMenu1);
 
         setJMenuBar(jMenuBar1);
@@ -501,29 +563,7 @@ public class Usuarios extends javax.swing.JFrame {
     private void jMenuItemSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSairActionPerformed
         dispose();
     }//GEN-LAST:event_jMenuItemSairActionPerformed
-// ----------------------------------------------------------------------------------------------    
-    // Interface para inserir novo registro
-    private void jBInserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBInserirActionPerformed
-        jLMensagem.setText("");
-        UsuarioDAO usuario = new UsuarioDAO();
-        if (jTNome.getText().length() < 0) {
-            jLMensagem.setText("O campo Nome deve ter mais que 3 caracteres.");
-        } else {
-            try {
-                SuperDTO usu = new SuperDTO();
-                usu = usuario.gravar(preencherSuperDTO());
-                if (usu == null){
-                    jLMensagem.setText("Existem erros nos dados! - " + Erros);
-                } else {    
-                    jLMensagem.setText("Registro GRAVADO com sucesso!");
-                    inicializa();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        
-    }//GEN-LAST:event_jBInserirActionPerformed
+
 // ----------------------------------------------------------------------------------------------    
     // interface para busca de registro...
     private void jBuscaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBuscaActionPerformed
@@ -544,12 +584,70 @@ public class Usuarios extends javax.swing.JFrame {
                 inicializa();
             } else {
                 // método para preencher o formulario com dados vindos do banco.
-               preencherFormulario(usuario);
+               preencherFormulario(usuario,0);
             }
         } catch (SQLException ex) {
             Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jBuscaActionPerformed
+
+    private void jBRelatorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBRelatorioActionPerformed
+        try {
+            // TODO add your handling code here:
+            relatorio();
+        } catch (SQLException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jBRelatorioActionPerformed
+
+   // Limpando os departamentos do usuario...
+    private void jBLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBLimparActionPerformed
+        limparDepartamentosUsuarios();
+    }//GEN-LAST:event_jBLimparActionPerformed
+
+    private void jBAlterarDepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBAlterarDepActionPerformed
+        adicionaDepartamentos();
+    }//GEN-LAST:event_jBAlterarDepActionPerformed
+
+    private void jTEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTEmailActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTEmailActionPerformed
+
+    private void jTSalarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTSalarioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTSalarioActionPerformed
+
+    private void jTLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTLoginActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTLoginActionPerformed
+
+    private void jBNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBNovoActionPerformed
+        inicializa();
+    }//GEN-LAST:event_jBNovoActionPerformed
+
+// ----------------------------------------------------------------------------------------------    
+// interface para exclusao de registro. OK!!!
+    private void jBExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBExcluirActionPerformed
+        jLMensagem.setText("");
+        UsuarioDAO usuario = new UsuarioDAO();
+
+        if (Utilitario.isEmpty(jTCodigoBusca.getText())) {
+            jLMensagem.setText("É Preciso selecionar um registro!");
+        } else {
+            try {
+                jPSenhaC.setText( String.valueOf(jPSenha.getPassword()));
+                usuario.excluir(preencherSuperDTO());
+                jLMensagem.setText("Registro excluido com sucesso!");
+            } catch (SQLException ex) {
+                jLMensagem.setText("Não foi possivel excluir o registro!" + ex.getSQLState());
+                Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        inicializa();
+    }//GEN-LAST:event_jBExcluirActionPerformed
+
 // ----------------------------------------------------------------------------------------------    
     // interface para alteracao de registro. OK!!!
     private void jBAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBAlterarActionPerformed
@@ -563,7 +661,7 @@ public class Usuarios extends javax.swing.JFrame {
                 usu = usuario.gravar(preencherSuperDTO());
                 if (usu == null){
                     jLMensagem.setText("Existem erros nos dados! - " + Erros);
-                } else {    
+                } else {
                     jLMensagem.setText("Registro GRAVADO com sucesso!");
                     inicializa();
                 }
@@ -572,39 +670,58 @@ public class Usuarios extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jBAlterarActionPerformed
-
-// ----------------------------------------------------------------------------------------------    
-// interface para exclusao de registro. OK!!!
-    private void jBExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBExcluirActionPerformed
+  private void jBInserirActionPerformed(java.awt.event.ActionEvent evt) {                                          
         jLMensagem.setText("");
         UsuarioDAO usuario = new UsuarioDAO();
-        
-        if (Utilitario.isEmpty(jTCodigoBusca.getText())) {
-            jLMensagem.setText("É Preciso selecionar um registro!");
+        if (jTNome.getText().length() < 3) {
+            jLMensagem.setText("O campo Nome deve ter mais que 3 caracteres.");
         } else {
             try {
-                usuario.excluir(preencherSuperDTO());
-                jLMensagem.setText("Registro excluido com sucesso!");
+                SuperDTO usu = new SuperDTO();
+                usu = usuario.gravar(preencherSuperDTO());
+                if (usu == null){
+                    jLMensagem.setText("Existem erros nos dados! - " + Erros);
+                } else {
+                    jLMensagem.setText("Registro GRAVADO com sucesso!");
+                    inicializa();
+                }
             } catch (SQLException ex) {
-                jLMensagem.setText("Não foi possivel excluir o registro!" + ex.getSQLState());
                 Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        inicializa();
-    }//GEN-LAST:event_jBExcluirActionPerformed
+    } 
 
-    private void jBNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBNovoActionPerformed
-        inicializa();
-    }//GEN-LAST:event_jBNovoActionPerformed
+//GEN-FIRST:event_jBInserirActionPerformed
+ 
+//GEN-LAST:event_jBInserirActionPerformed
 
-    private void jBAlterarDepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBAlterarDepActionPerformed
-       adicionaDepartamentos();
-    }//GEN-LAST:event_jBAlterarDepActionPerformed
+    private void jMGerarPlanilhaExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMGerarPlanilhaExcelActionPerformed
+        try {
+            // TODO add your handling code here:
+            jPSenhaC.setText( String.valueOf(jPSenha.getPassword()));
+            planilhaExcel();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMGerarPlanilhaExcelActionPerformed
 
-   // Limpando os departamentos do usuario...
-    private void jBLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBLimparActionPerformed
-        limparDepartamentosUsuarios();
-    }//GEN-LAST:event_jBLimparActionPerformed
+    private void jMGerarPlanilhaExcelTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMGerarPlanilhaExcelTodosActionPerformed
+        try {
+            // TODO add your handling code here:
+            jPSenhaC.setText( String.valueOf(jPSenha.getPassword()));
+            planilhaExcelLista();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMGerarPlanilhaExcelTodosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -650,6 +767,7 @@ public class Usuarios extends javax.swing.JFrame {
     private javax.swing.JButton jBInserir;
     private javax.swing.JButton jBLimpar;
     private javax.swing.JButton jBNovo;
+    private javax.swing.JButton jBRelatorio;
     private javax.swing.JButton jBusca;
     private javax.swing.JComboBox jCSexo;
     private javax.swing.JComboBox jComboCargos;
@@ -670,6 +788,8 @@ public class Usuarios extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JMenuItem jMGerarPlanilhaExcel;
+    private javax.swing.JMenuItem jMGerarPlanilhaExcelTodos;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItemSair;
@@ -773,6 +893,8 @@ public class Usuarios extends javax.swing.JFrame {
         
         SuperDTO usuario = new SuperDTO();
         usuario.setAtrib(campos,valores);   //  atrib = campos da tabela principal
+        //usuario.getAtrib().get("observacao");
+        // System.out.println(usuario.getAtrib().get("observacao"));
         
         // Depois o relacionamento de N para N.
         // Preenchendo departamentos o que usuario fará parte:
@@ -893,9 +1015,9 @@ public class Usuarios extends javax.swing.JFrame {
     }        
     
 // =============================================================================================    
-    private void preencherFormulario(List<Map<String, String>> usuario) throws SQLException {
+    private void preencherFormulario(List<Map<String, String>> usuario,int laco) throws SQLException {
             // Preenche um registro...
-            Map<String, String> registro = usuario.get(0);
+            Map<String, String> registro = usuario.get(laco);
         
             jTCodigo.setText(registro.get("id"));
             jTNome.setText(registro.get("nome"));
@@ -996,4 +1118,447 @@ public class Usuarios extends javax.swing.JFrame {
  private void adicionaDepartamentos() {
         jLDepartamentosIncluir.setListData(jLDepartamentos.getSelectedValues());
     }    
+ 
+// ============================================================================
+ /**
+  * rotina de relatorios do sistema
+  * 
+  */ 
+ private void relatorio() throws SQLException, FileNotFoundException{
+     UsuarioDAO usuario = new UsuarioDAO();        
+     String titulo = "Relatório de Usuários:";
+     String arquivo = "C:/relatorio/usuario.pdf";
+     String campos[]= {"id","nome","login","senha","dataNascimento","sexo",
+             "salario","email","observacao","ativo","cargo_id"};
+     String rotulos[] = {"ID","NOME","LOGIN","SENHA","DATA DE NASCIMENTO",
+               "SEXO", "SALÁRIO","E-MAIL","OBSERVAÇÃO","ATIVO","CARGO ID"};
+     
+     usuario.exportarPDF(titulo,arquivo,usuario.listar(""),rotulos, campos);
+}
+// --------------
+// ----------------------------------------------------------------------------
+ /**
+  * Método para geracao de planilha excel do registro corrente...
+  * @throws FileNotFoundException
+  * @throws IOException 
+  */
+ private void planilhaExcel() throws FileNotFoundException, IOException, SQLException {
+
+  // variavel para setar se os representantes serão impressos
+  // em uma mesma coluna ou mais de uma -> 1 = mesma coluna; 2 = em várias colunas.   
+  int colunas = 1;   
+     
+  // PEGANDO DADOS DO SUPERDTO ================================================
+     
+  SuperDTO usuario = preencherSuperDTO(); // preenche os dados do formulario...
+  String [] ret = {"id","nome","login","dataNascimento","sexo",
+             "salario","email","observacao","ativo","cargo_id"};
+  
+  String[] cabecalho = {"ID","NOME","LOGIN","DATA DE NASCIMENTO",
+               "SEXO", "SALÁRIO","E-MAIL","OBSERVAÇÃO","ATIVO","CARGO"};
+  
+   SuperModel model = new SuperModel(); // instanciando Super Model
+          
+  // Verificando chave estrangeira:
+  // Traduzindo id para Nome - relacionamento 1 .. N
+        String Campos[] = {"id","descricao"};  // campos da tabela cargo
+        String condicao = "id="+usuario.getAtrib().get("cargo_id");
+        ResultSet lista = model.list("cargos",Campos,condicao);
+        List<Map<String , String>> registro = model.DevolveLista(Campos,lista);
+        String chave[] = {"cargo_id"};  // chave estrangeira da tabela usuarios relacionada ao cargo
+        String valor[] = {registro.get(0).get(Campos[1])};  // relacina a descricao do cargo
+        usuario.setAtrib(chave,valor);
+
+  // Verificando Relacionamento N..N
+  // Traduzindo id para Nome - relacionamento N .. N
+
+    for (int ct=0;ct<usuario.getRelC().size();ct++){    
+        String Campos2[] = {"id","descricao"}; // campos da tabela departamento
+        condicao = "id="+usuario.getRelC().get(ct).get("departamentos_id");
+        lista = model.list("departamentos",Campos2,condicao);
+        registro = model.DevolveLista(Campos2,lista);
+        String chave2[] = {"departamentos_id"}; // chave na tabela de relacionamento usuarios - representantes
+        String valor2[] = {registro.get(0).get(Campos2[1])};  // relacina ao nome do usuario (representante)
+        //  permite alterar um valor já inserido no SuperDTO numa dada posicao
+        usuario.altRelC(ct,chave2,valor2);
+    }
+     
+   // ABAIXO, INICIO DA GERACAO DA PLANILHA
+    Workbook wb = new HSSFWorkbook(); // cria arquivo
+    CreationHelper createHelper = wb.getCreationHelper();
+    Sheet planilha1 = wb.createSheet("Planilha 1");  // cria planilha
+
+    // Estilo padronizados: ================================================
+    
+    // Estilo data DIA/MES/ANO
+    CellStyle estiloData = wb.createCellStyle();
+    estiloData.setDataFormat( createHelper.createDataFormat().getFormat("dd/mm/yyyy"));
+    
+    // Estilo Moeda: R$800,00
+    CellStyle estiloMoeda = wb.createCellStyle();
+    estiloMoeda.setDataFormat(createHelper.createDataFormat().getFormat("R$##,##0.00"));
+  
+    // Estilo Número 1.000,00
+    CellStyle estiloNumero = wb.createCellStyle();
+    estiloNumero.setDataFormat(createHelper.createDataFormat().getFormat("##,##0.00"));
+    
+    // Estilo Número Inteiro 256
+    CellStyle estiloNumeroInteiro = wb.createCellStyle();
+    estiloNumeroInteiro.setDataFormat(createHelper.createDataFormat().getFormat("#0"));
+    
+  
+    // CABEÇALHO DA PLANILHA ================================================
+    
+    // Título:
+    Row titulo = planilha1.createRow((short)0);
+    Cell tit = titulo.createCell(0);
+    tit.setCellValue("Planilha de Usuários");
+    
+    // Codigo para pegar o total das colunas
+    int totColuna = usuario.getRelC().size();
+    
+    // Verifica impressao em varias colunas dos representantes.
+    if (colunas != 1){
+        totColuna = totColuna + ret.length -1;  // no caso de impressao em várias colunas
+    } else {    
+        totColuna = ret.length;  // no caso de agrupamento dos representantes em uma mesma coluna
+    }    
+    
+    // Mesclando o titulo do Relatório
+    planilha1.addMergedRegion(new CellRangeAddress(
+            0, //first row (0-based)
+            0, //last row  (0-based)
+            0, //first column (0-based)
+            totColuna  //last column  (0-based)
+    ));
+
+  
+    // Cabeçalho:
+    Row cab = planilha1.createRow((short)1);
+    int ct=0;
+    for (ct=0;ct<ret.length;ct++){
+        cab.createCell(ct).setCellValue(cabecalho[ct]);
+    }    
+
+    int inicio = ct;
+    if (colunas != 1){ // verifica se será uma ou mais colunas para os representantes...
+        // Preenchendo cabeçalho do Representante
+        for (ct=inicio;ct<usuario.getRelC().size()+inicio;ct++){
+            cab.createCell(ct).setCellValue("DEPARTAMENTOS:");
+        }    
+    }else {    
+        // Forma alternativa: criando uma única coluna para o relacionamento N:N
+        cab.createCell(ct).setCellValue("DEPARTAMENTOS:");
+    }
+
+    
+    // ESCREVENDO OS DADOS DO USUÁRIO ================================================
+            
+    // Dados do Usuário: Tabela usuarios...
+    // ATENÇÃO: para passar um estilo para um dado na planilha EXCEL
+    //          é preciso que o formato do dado sej int, double, date, etc
+    //          daí a necessidade de converter os dados do HASH ...
+    
+    Row linha = planilha1.createRow((short)2);
+    for (ct=0;ct<ret.length;ct++){
+        if (ret[ct].equals("salario")){  // formato Moeda
+            String valorTemp = usuario.getAtrib().get(ret[ct]);
+            Cell numero = linha.createCell(ct);
+            numero.setCellStyle(estiloMoeda);
+            numero.setCellValue(Validar.ConverteNumero(valorTemp));
+        } else if (ret[ct].equals("dataNascimento")){   // formato Data
+            Cell numero = linha.createCell(ct);
+            numero.setCellStyle(estiloData);
+            String data = Validar.DataFormulario(usuario.getAtrib().get(ret[ct]));
+            numero.setCellValue(Validar.StringToDate(data));
+        } else if (ret[ct].equals("ativo#")){   // formato Número
+            String valorTemp = usuario.getAtrib().get(ret[ct]);
+            Cell numero = linha.createCell(ct);
+            numero.setCellStyle(estiloNumero);
+            numero.setCellValue(Validar.ConverteNumero(valorTemp));
+        } else if (ret[ct].equals("id")){   // formato Número Inteiro
+            String valorTemp = usuario.getAtrib().get(ret[ct]);
+            Cell numero = linha.createCell(ct);
+            numero.setCellStyle(estiloNumeroInteiro);
+            numero.setCellValue(Validar.ConverteNumeroInteiro(valorTemp));            
+        } else{  // formato String
+            linha.createCell(ct).setCellValue(usuario.getAtrib().get(ret[ct]));
+        }
+    }    
+    
+    // Preenchendo dados do Representante ================================================
+    inicio = ct;
+    int contador = 0;
+    if (colunas != 1){ // impressao em varias colunas dos representantes ou uma só
+        for (ct=inicio;ct<usuario.getRelC().size()+inicio;ct++){
+            String reg = usuario.getRelC().get(contador).get("departamentos_id");
+            linha.createCell(ct).setCellValue(reg);
+            contador = contador + 1;
+        }    
+    } else {
+        // método alternativo: agrupando os representantes numa única célula:
+        String reg = "";
+        for (contador=0;contador<usuario.getRelC().size();contador++){
+            if (contador != usuario.getRelC().size()-1){    
+                reg += usuario.getRelC().get(contador).get("departamentos_id") + ",\n";
+            } else{
+                reg += usuario.getRelC().get(contador).get("departamentos_id");
+            }
+        }
+        linha.createCell(ct).setCellValue(reg);    // coloca todos os representantes na mesma célula
+        linha.setHeight((short)(linha.getHeight()*contador));  // aumenta a altura da linha para mostrar conteúdo
+    }
+    // Formula de soma coluna: ================================================
+    
+    Row formula = planilha1.createRow((short)3); // criando linha da formula
+    for (ct=0;ct<=totColuna;ct++){
+        formula.createCell(ct);  // criando células na linha da formula
+    }
+    
+    // Somendo Limite de Crédito:
+    String strformula = "SUM(F3:F3)";
+    formula.createCell(5).setCellFormula(strformula); // colocando formula numa determinada célula....
+    
+    // Redimensionado as colunas para caber conteúdo ======================
+    for (ct=0;ct<=totColuna;ct++){
+        planilha1.autoSizeColumn(ct);
+    }
+
+    // Gravando o arquivo  ================================================
+    FileOutputStream fileOut = new FileOutputStream("c:/relatorio/usuarios1.xls");
+    wb.write(fileOut);
+    fileOut.close();
  }
+ // ================================================================================
+ // ================================================================================
+ 
+ /**
+  * Cria uma planilha excel com dados de todos os usuarios
+  * @throws FileNotFoundException
+  * @throws IOException
+  * @throws SQLException 
+  */
+ private void planilhaExcelLista() throws FileNotFoundException, IOException, SQLException {
+
+  // variavel para setar se os representantes serão impressos
+  // em uma mesma coluna ou mais de uma -> 1 = mesma coluna; 2 = em várias colunas.   
+  int colunas = 1;   
+
+  // PEGANDO DADOS DO SUPERDTO ================================================
+
+    UsuarioDAO usu = new UsuarioDAO();
+    List<Map<String , String>> usuarios  = new ArrayList<Map<String,String>>();
+    usuarios = usu.listar(""); // todos os usuarios     
+  
+ String [] ret = {"id","nome","login","dataNascimento","sexo",
+             "salario","email","observacao","ativo","cargo_id"};
+  
+  String[] cabecalho = {"ID","NOME","LOGIN","DATA DE NASCIMENTO",
+               "SEXO", "SALÁRIO","E-MAIL","OBSERVAÇÃO","ATIVO","CARGO"};
+  
+  
+       
+   // ABAIXO, INICIO DA GERACAO DA PLANILHA
+    Workbook wb = new HSSFWorkbook(); // cria arquivo
+    CreationHelper createHelper = wb.getCreationHelper();
+    Sheet planilha1 = wb.createSheet("Planilha 1");  // cria planilha
+
+    // Estilo padronizados: ================================================
+    
+    // Estilo data DIA/MES/ANO
+    CellStyle estiloData = wb.createCellStyle();
+    estiloData.setDataFormat( createHelper.createDataFormat().getFormat("dd/mm/yyyy"));
+    
+    // Estilo Moeda: R$800,00
+    CellStyle estiloMoeda = wb.createCellStyle();
+    estiloMoeda.setDataFormat(createHelper.createDataFormat().getFormat("R$##,##0.00"));
+  
+    // Estilo Número 1.000,00
+    CellStyle estiloNumero = wb.createCellStyle();
+    estiloNumero.setDataFormat(createHelper.createDataFormat().getFormat("##,##0.00"));
+    
+    // Estilo Número Inteiro 256
+    CellStyle estiloNumeroInteiro = wb.createCellStyle();
+    estiloNumeroInteiro.setDataFormat(createHelper.createDataFormat().getFormat("#0"));
+    
+  // Calculando o Total das Colunas...
+    int totColuna=0;  // total de colunas
+    if (colunas != 1){  // se houver mais de uma coluna para representantes entao devemos saber quantas!!!!
+        for (int ct=0;ct<usuarios.size();ct++){
+            preencherFormulario(usuarios,ct);  // preenche o formulario com o registro corrente... 
+            SuperDTO usuario = preencherSuperDTO(); // preenche os dados do formulario...
+            if (usuario.getRelC().size()>totColuna){
+                totColuna = usuario.getRelC().size();
+            }
+        }    
+    }
+    
+    // Verifica impressao em varias colunas dos representantes.
+    if (colunas != 1){
+        totColuna = totColuna + ret.length -1;  // no caso de impressao em várias colunas
+    } else {    
+        totColuna = ret.length;  // no caso de agrupamento dos representantes em uma mesma coluna
+    }    
+    
+    int laco = 0;
+   // laco com todos os usuarios...
+  for (laco=0;laco<usuarios.size();laco++){  // for para varrer todos os registros...
+        // 
+       preencherFormulario(usuarios,laco);  // preenche o formulario com o registro corrente... 
+       SuperDTO usuario = preencherSuperDTO(); // preenche os dados do formulario...
+       SuperModel model = new SuperModel(); // instanciando Super Model
+
+      // Verificando chave estrangeira:
+      // Traduzindo id para Nome - relacionamento 1 .. N
+            String Campos[] = {"id","descricao"};  // campos da tabela cargo
+            String condicao = "id="+usuario.getAtrib().get("cargo_id");
+            ResultSet lista = model.list("cargos",Campos,condicao);
+            List<Map<String , String>> registro = model.DevolveLista(Campos,lista);
+            String chave[] = {"cargo_id"};  // chave estrangeira da tabela usuarios relacionada ao estado...
+            String valor[] = {registro.get(0).get(Campos[1])};  // relacina a descricao do estado
+            usuario.setAtrib(chave,valor);
+
+      // Verificando Relacionamento N..N
+      // Traduzindo id para Nome - relacionamento N .. N
+
+        for (int ct=0;ct<usuario.getRelC().size();ct++){    
+            String Campos2[] = {"id","descricao"}; // campos da tabela departamentos.
+            condicao = "id="+usuario.getRelC().get(ct).get("departamentos_id");
+            lista = model.list("departamentos",Campos2,condicao);
+            registro = model.DevolveLista(Campos2,lista);
+            String chave2[] = {"departamentos_id"}; // chave na tabela de relacionamento usuarios - representantes
+            String valor2[] = {registro.get(0).get(Campos2[1])};  // relacina ao nome do usuario (representante)
+            //  permite alterar um valor já inserido no SuperDTO numa dada posicao
+            usuario.altRelC(ct,chave2,valor2);
+        }    
+        // CABEÇALHO DA PLANILHA ================================================
+
+        int ct=0, inicio=0;
+        if (laco==0){  // so imprime o cabecalho uma vez....
+                // Título:
+                Row titulo = planilha1.createRow((short)0);
+                Cell tit = titulo.createCell(0);
+                tit.setCellValue("Planilha de Usuários");
+
+                // Codigo para pegar o total das colunas
+                //totColuna = usuario.getRelC().size();
+                //totColuna = totColuna + ret.length -1;
+
+                // Mesclando o titulo do Relatório
+                planilha1.addMergedRegion(new CellRangeAddress(
+                        0, //first row (0-based)
+                        0, //last row  (0-based)
+                        0, //first column (0-based)
+                        totColuna  //last column  (0-based)
+                ));
+
+
+                // Cabeçalho:
+                Row cab = planilha1.createRow((short)1);
+                for (ct=0;ct<ret.length;ct++){
+                    cab.createCell(ct).setCellValue(cabecalho[ct]);
+                }    
+
+                if (colunas != 1){ // verifica se será uma ou mais colunas para os representantes...
+                    // Preenchendo cabeçalho do Represerntante
+                    inicio = ct;
+                    for (ct=inicio;ct<totColuna+inicio-ret.length+1;ct++){
+                        cab.createCell(ct).setCellValue("DEPARTAMENTOS:");
+                    } 
+                }else{
+                    // Forma alternativa: criando uma única coluna para o relacionamento N:N
+                    inicio = ct;
+                    cab.createCell(ct).setCellValue("DEPARTAMENTOS:");
+                }
+        }
+        
+        // ESCREVENDO OS DADOS DO USUÁRIO ================================================
+
+        // Dados do Usuário: Tabela usuarios...
+        // ATENÇÃO: para passar um estilo para um dado na planilha EXCEL
+        //          é preciso que o formato do dado sej int, double, date, etc
+        //          daí a necessidade de converter os dados do HASH ...
+
+        Row linha = planilha1.createRow((short)laco+2);
+        for (ct=0;ct<ret.length;ct++){
+            if (ret[ct].equals("salario")){  // formato Moeda
+                String valorTemp = usuario.getAtrib().get(ret[ct]);
+                Cell numero = linha.createCell(ct);
+                numero.setCellStyle(estiloMoeda);
+                numero.setCellValue(Validar.ConverteNumero(valorTemp));
+            } else if (ret[ct].equals("dataNascimento")){   // formato Data
+                Cell numero = linha.createCell(ct);
+                numero.setCellStyle(estiloData);
+                String data = Validar.DataFormulario(usuario.getAtrib().get(ret[ct]));
+                numero.setCellValue(Validar.StringToDate(data));
+            } else if (ret[ct].equals("ativo#")){   // formato Número
+                String valorTemp = usuario.getAtrib().get(ret[ct]);
+                Cell numero = linha.createCell(ct);
+                numero.setCellStyle(estiloNumero);
+                numero.setCellValue(Validar.ConverteNumero(valorTemp));
+            } else if (ret[ct].equals("id")){   // formato Número Inteiro
+                String valorTemp = usuario.getAtrib().get(ret[ct]);
+                Cell numero = linha.createCell(ct);
+                numero.setCellStyle(estiloNumeroInteiro);
+                numero.setCellValue(Validar.ConverteNumeroInteiro(valorTemp));            
+            } else{  // formato String
+                linha.createCell(ct).setCellValue(usuario.getAtrib().get(ret[ct]));
+            }
+        }    
+
+        // Preenchendo dados do Representante ================================================
+        inicio = ct;
+        int contador = 0;
+        if (colunas != 1){ // verifica se será uma ou mais colunas para os representantes...
+            for (ct=inicio;ct<usuario.getRelC().size()+inicio;ct++){
+                String reg = usuario.getRelC().get(contador).get("departamentos_id");
+                linha.createCell(ct).setCellValue(reg);
+                contador = contador + 1;
+            }    
+        } else {
+        // método alternativo: agrupando os representantes numa única célula:
+            String reg = "";
+            for (contador=0;contador<usuario.getRelC().size();contador++){
+                if (contador != usuario.getRelC().size()-1){    
+                    reg += usuario.getRelC().get(contador).get("departamentos_id") + ",\n";
+                } else{
+                    reg += usuario.getRelC().get(contador).get("departamentos_id");
+                }
+            }
+            linha.createCell(ct).setCellValue(reg);    // coloca todos os representantes na mesma célula
+            linha.setHeight((short)(linha.getHeight()*contador));  // aumenta a altura da linha para mostrar conteúdo
+        }    
+  }  // fim do laco que varre os registros...
+  
+    // Formula de soma coluna: ================================================
+    
+    int ct;
+    Row formula = planilha1.createRow((short)laco+2); // criando linha da formula
+    for (ct=0;ct<=totColuna;ct++){
+        formula.createCell(ct);  // criando células na linha da formula
+    }
+    
+    // Somando limite de crédito:
+    String strformula = "SUM(F3:F"+(usuarios.size()+2)+")"; // calculando a linha apara inserir a formula...
+    formula.createCell(5).setCellFormula(strformula); // colocando formula numa determinada célula....
+
+    // Multiplicando id dos registros...
+    strformula = "SUM(A3:A"+(usuarios.size()+2)+")"; // calculando a linha apara inserir a formula...
+    formula.createCell(0).setCellFormula(strformula); // colocando formula numa determinada célula....
+    
+    
+    
+    // Redimensionado as colunas para caber conteúdo ======================
+    for (ct=0;ct<=totColuna;ct++){
+        planilha1.autoSizeColumn(ct);
+    }
+
+    // Gravando o arquivo  ================================================
+    FileOutputStream fileOut = new FileOutputStream("c:/relatorio/usuarios2.xls");
+    wb.write(fileOut);
+    fileOut.close();
+    inicializa();   //  limpa tudo...
+ 
+ }
+ // ====================================================================================
+ } // fim da classe

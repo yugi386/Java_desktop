@@ -5,9 +5,13 @@
 package br.webverissimo.cadastro.cadastroTelas;
 
 import br.webverissimo.cadastro.model.DAO.CargoDAO;
+import br.webverissimo.cadastro.model.DAO.ModelExtends;
 import br.webverissimo.cadastro.model.DTO.CargoDTO;
+import br.webverissimo.cadastro.model.MODEL.SuperModel;
 import br.webverissimo.cadastro.utils.Utilitario;
 import br.webverissimo.cadastro.utils.Validacao;
+import java.io.FileNotFoundException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -60,6 +64,7 @@ public class Cargos extends javax.swing.JFrame {
         jBAlterar = new javax.swing.JButton();
         jBExcluir = new javax.swing.JButton();
         jBNovo = new javax.swing.JButton();
+        jBRelatorio = new javax.swing.JButton();
         jPMensagem = new javax.swing.JPanel();
         jLMensagem = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -121,6 +126,13 @@ public class Cargos extends javax.swing.JFrame {
             }
         });
 
+        jBRelatorio.setText("Relatório");
+        jBRelatorio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBRelatorioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -128,12 +140,14 @@ public class Cargos extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLCodigo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLCodigo)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jTCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jBRelatorio, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addComponent(jBInserir, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -159,7 +173,8 @@ public class Cargos extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jBRelatorio))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLDescricao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -277,7 +292,7 @@ public class Cargos extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30))
         );
@@ -378,6 +393,17 @@ public class Cargos extends javax.swing.JFrame {
         inicializa();
     }//GEN-LAST:event_jBNovoActionPerformed
 
+    private void jBRelatorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBRelatorioActionPerformed
+        try {
+            // TODO add your handling code here:
+            relatorio();
+        } catch (SQLException ex) {
+            Logger.getLogger(Cargos.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Cargos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jBRelatorioActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -417,6 +443,7 @@ public class Cargos extends javax.swing.JFrame {
     private javax.swing.JButton jBExcluir;
     private javax.swing.JButton jBInserir;
     private javax.swing.JButton jBNovo;
+    private javax.swing.JButton jBRelatorio;
     private javax.swing.JButton jBusca;
     private javax.swing.JLabel jLCodigo;
     private javax.swing.JLabel jLCodigoBusca;
@@ -488,4 +515,19 @@ public class Cargos extends javax.swing.JFrame {
         }
     }
  
+// ======================================    
+private void relatorio() throws SQLException, FileNotFoundException{
+     CargoDAO cargos = new CargoDAO();        
+     String titulo = "Relatório de Cargos:";
+     String arquivo = "C:/relatorio/cargos.pdf";
+     String campos[]= {"id","descricao"};
+     String rotulos[] = {"ID","DESCRIÇÃO"};
+     
+     SuperModel model = new SuperModel();
+     ResultSet lista = model.list("cargos",campos,"");
+     
+     ModelExtends pdf = new ModelExtends();
+     pdf.exportarPDF(titulo,arquivo,model.DevolveLista(campos,lista),rotulos, campos);
+}    
+    
 }
